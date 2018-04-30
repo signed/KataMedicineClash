@@ -18,7 +18,7 @@ public class Patient {
 
     public Collection<Date> clash(Collection<String> medicineNames, int daysBack) {
         // TODO: implement this method
-        return null;
+        return new ArrayList<>();
     }
 
 
