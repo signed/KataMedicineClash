@@ -7,9 +7,9 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 
 public class Patient {
@@ -26,21 +26,21 @@ public class Patient {
     }
 
     public Collection<LocalDate> clash(Collection<String> medicineNames, int daysBack) {
-        List<String> distinctMedicineNames = medicineNames.stream().distinct().collect(Collectors.toList());
+        List<String> distinctMedicineNames = medicineNames.stream().distinct().collect(toList());
         if (distinctMedicineNames.size() < 2) {
             return Collections.emptySet();
         }
-        Map<LocalDate, List<String>> medicationRegimen = medicationRegimen();
-        return range(1, daysBack + 1).mapToObj(i -> LocalDate.now().minusDays(i))
-                .filter(date -> hasClash(medicationRegimen, distinctMedicineNames, date))
-                .collect(Collectors.toList());
+        MedicationRegimen medicationRegimen = medicationRegimen();
+        return datesToInspect(daysBack)
+                .filter(date -> medicationRegimen.hasTakenAllOfAt(date, distinctMedicineNames))
+                .collect(toList());
     }
 
-    private boolean hasClash(Map<LocalDate, List<String>> medicationRegimen, Collection<String> medicineNames, LocalDate yesterday) {
-        return medicationRegimen.getOrDefault(yesterday, emptyList()).containsAll(medicineNames);
+    private Stream<LocalDate> datesToInspect(int daysBack) {
+        return range(1, daysBack + 1).mapToObj(i -> LocalDate.now().minusDays(i));
     }
 
-    private Map<LocalDate, List<String>> medicationRegimen() {
+    private MedicationRegimen medicationRegimen() {
         Map<LocalDate, List<String>> days = new LinkedHashMap<>();
 
         for (Medicine medicine : medicines) {
@@ -48,7 +48,7 @@ public class Patient {
                 days.computeIfAbsent(localDate, day -> new ArrayList<>()).add(medicine.name());
             }
         }
-        return days;
+        return new MedicationRegimen(days);
     }
 
 
