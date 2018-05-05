@@ -13,6 +13,7 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static support.PatientMother.anyDateBeforeTheInspectionPeriod;
 import static support.PatientMother.anyDateWithinTheInspectionPeriod;
+import static support.PatientMother.anyOtherDateWithinTheInspectionPeriod;
 import static support.PatientMother.defaultInspectionDaysInThePast;
 import static support.PatientMother.patientWithoutPrescriptions;
 import static support.PrescriptionMother.oneDayPrescription;
@@ -30,7 +31,7 @@ class PatientTests {
     }
 
     @Test
-    void querying_for_a_clash_with_only_one_medic_name_results_can_not_cause_clashes() {
+    void querying_for_a_clash_with_only_one_medicine_name_can_not_cause_clashes_even_if_patient_has_a_prescription() {
         PrescriptionBuilder oneDayPrescription = oneDayPrescription().starting(anyDateWithinTheInspectionPeriod());
 
         patient.withPrescriptionFor("one", oneDayPrescription);
@@ -41,10 +42,7 @@ class PatientTests {
     @Test
     void patient_with_two_clashing_prescriptions() {
         LocalDate dateOfPrescription = anyDateWithinTheInspectionPeriod();
-        PrescriptionBuilder oneDayPrescription = oneDayPrescription().starting(dateOfPrescription);
-
-        patient.withPrescriptionFor("one", oneDayPrescription);
-        patient.withPrescriptionFor("two", oneDayPrescription);
+        thereIsAMedicineClashAt(dateOfPrescription);
 
         assertThat(clashFor(asList("one", "two"))).containsOnly(dateOfPrescription);
     }
@@ -53,22 +51,29 @@ class PatientTests {
     void patient_taking_two_clashing_medicines_but_on_different_days_is_not_a_clash() {
         LocalDate dateOfPrescriptionOne = anyDateWithinTheInspectionPeriod();
         PrescriptionBuilder prescriptionOne = oneDayPrescription().starting(dateOfPrescriptionOne);
-        LocalDate dateOfPrescriptionTwo = PatientMother.anyOtherDateWithinTheInspectionPeriod(dateOfPrescriptionOne);
+
+        LocalDate dateOfPrescriptionTwo = anyOtherDateWithinTheInspectionPeriod(dateOfPrescriptionOne);
         PrescriptionBuilder prescriptionTwo = oneDayPrescription().starting(dateOfPrescriptionTwo);
 
         patient.withPrescriptionFor("one", prescriptionOne);
         patient.withPrescriptionFor("two", prescriptionTwo);
 
-        assertThat(clashFor(asList("one", "two"))).describedAs("prescriptions are on different days and should not clash").isEmpty();
+        assertThat(clashFor(asList("one", "two")))
+                .describedAs("prescriptions are on different days and should not clash").isEmpty();
     }
 
     @Test
     void do_not_report_clashes_that_are_before_the_inspection_period() {
-        PrescriptionBuilder oneDayPrescription = oneDayPrescription().starting(anyDateBeforeTheInspectionPeriod());
+        thereIsAMedicineClashAt(anyDateBeforeTheInspectionPeriod());
+
+        assertThat(clashFor(asList("one", "two")))
+                .describedAs("should not be reported as clash because it is before the inspection period").isEmpty();
+    }
+
+    private void thereIsAMedicineClashAt(LocalDate clashDay) {
+        PrescriptionBuilder oneDayPrescription = oneDayPrescription().starting(clashDay);
         patient.withPrescriptionFor("one", oneDayPrescription);
         patient.withPrescriptionFor("two", oneDayPrescription);
-
-        assertThat(clashFor(asList("one", "two"))).isEmpty();
     }
 
     private Collection<LocalDate> clashFor(Collection<String> medicineNames) {
