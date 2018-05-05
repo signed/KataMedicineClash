@@ -30,6 +30,10 @@ public class Patient {
         if (distinctMedicineNames.size() < 2) {
             return Collections.emptySet();
         }
+        return detectDatesWithClash(distinctMedicineNames, daysBack);
+    }
+
+    private Collection<LocalDate> detectDatesWithClash(List<String> distinctMedicineNames, int daysBack) {
         MedicationRegimen medicationRegimen = medicationRegimen();
         return datesToInspect(daysBack)
                 .filter(date -> medicationRegimen.hasTakenAllOfAt(date, distinctMedicineNames))
