@@ -7,14 +7,15 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static support.PrescriptionMother.StartDate.anyDate;
 import static support.PrescriptionMother.SupplyDays.oneDay;
-import static support.PrescriptionMother.prescriptionStarting;
 import static support.PrescriptionMother.SupplyDays.threeDays;
 import static support.PrescriptionMother.SupplyDays.toSmallNumberOfDays;
+import static support.PrescriptionMother.prescriptionStarting;
 
 class PrescriptionTests {
 
-    private final LocalDate prescriptionStartDay = anyDay();
+    private final LocalDate prescriptionStartDay = anyDate();
     private final PrescriptionBuilder prescription = prescriptionStarting(prescriptionStartDay);
 
     @Test
@@ -42,7 +43,4 @@ class PrescriptionTests {
         return this.prescription.build().daysCoveredByPrescription();
     }
 
-    private LocalDate anyDay() {
-        return LocalDate.now();
-    }
 }

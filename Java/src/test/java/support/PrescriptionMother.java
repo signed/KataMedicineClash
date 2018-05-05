@@ -33,6 +33,10 @@ public class PrescriptionMother {
 
     public static class StartDate{
 
+        public static LocalDate anyDate() {
+            return LocalDate.now();
+        }
+
         public static LocalDate anyPrescriptionStartDate() {
             return LocalDate.now().plusDays(3472);
         }
