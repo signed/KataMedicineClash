@@ -3,7 +3,7 @@ package medicine;
 import org.junit.jupiter.api.Test;
 import support.MedicineBuilder;
 import support.MedicineMother;
-import support.PrescriptionMother;
+import support.PatientMother;
 
 import java.time.LocalDate;
 
@@ -16,9 +16,9 @@ class MedicineTests {
 
     @Test
     void combine_all_prescription_dates_of_all_prescriptions() {
-        LocalDate firstPrescriptionStartDate = PrescriptionMother.anyPrescriptionStartDate();
+        LocalDate firstPrescriptionStartDate = PatientMother.anyPrescriptionStartDate();
         medicine.withPrescription(oneDayPrescription().starting(firstPrescriptionStartDate));
-        LocalDate secondPrescriptionStartDate = PrescriptionMother.anyOtherPrescriptionStartDate(firstPrescriptionStartDate);
+        LocalDate secondPrescriptionStartDate = PatientMother.anyOtherPrescriptionStartDate(firstPrescriptionStartDate);
         medicine.withPrescription(oneDayPrescription().starting(secondPrescriptionStartDate));
 
         assertThat(medicine.build().daysCoveredByPrescriptions()).containsExactly(firstPrescriptionStartDate, secondPrescriptionStartDate);
@@ -26,7 +26,7 @@ class MedicineTests {
 
     @Test
     void remove_duplicate_prescription_dates() {
-        LocalDate dayWithDuplicatePrescription = PrescriptionMother.anyPrescriptionStartDate();
+        LocalDate dayWithDuplicatePrescription = PatientMother.anyPrescriptionStartDate();
 
         medicine.withPrescription(oneDayPrescription().starting(dayWithDuplicatePrescription));
         medicine.withPrescription(oneDayPrescription().starting(dayWithDuplicatePrescription));

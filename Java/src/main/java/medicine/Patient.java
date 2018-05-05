@@ -3,12 +3,17 @@ package medicine;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.Collections.emptyList;
 
 public class Patient {
 
+    public static final int DefaultNumberOfDaysBack = 90;
     private final Collection<Medicine> medicines = new ArrayList<>();
 
     public void addMedicine(Medicine medicine) {
@@ -16,21 +21,30 @@ public class Patient {
     }
 
     public Collection<LocalDate> clash(Collection<String> medicineNames) {
-        return clash(medicineNames, 90);
+        return clash(medicineNames, DefaultNumberOfDaysBack);
     }
 
     public Collection<LocalDate> clash(Collection<String> medicineNames, int daysBack) {
-        List<LocalDate> daysWithClashingPrescriptions = new ArrayList<>();
+        Map<LocalDate, List<String>> days = medicationRegimen();
+        return IntStream.range(1, daysBack + 1).mapToObj(i -> LocalDate.now().minusDays(i))
+                .filter(day -> hasClash(medicineNames, days, day))
+                .collect(Collectors.toList());
+    }
 
+    private boolean hasClash(Collection<String> medicineNames, Map<LocalDate, List<String>> days, LocalDate yesterday) {
+        List<String> dasfsa = days.getOrDefault(yesterday, emptyList());
+        return dasfsa.containsAll(medicineNames);
+    }
 
-        List<String> dasfsa = medicines.stream()
-                .map(Medicine::name)
-                .collect(toList());
+    private Map<LocalDate, List<String>> medicationRegimen() {
+        Map<LocalDate, List<String>> days = new LinkedHashMap<>();
 
-        if (dasfsa.containsAll(medicineNames)) {
-            daysWithClashingPrescriptions.add(LocalDate.now().minusDays(1));
+        for (Medicine medicine : medicines) {
+            for (LocalDate localDate : medicine.daysCoveredByPrescriptions()) {
+                days.computeIfAbsent(localDate, day -> new ArrayList<>()).add(medicine.name());
+            }
         }
-        return daysWithClashingPrescriptions;
+        return days;
     }
 
 

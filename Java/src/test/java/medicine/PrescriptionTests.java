@@ -7,7 +7,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static support.PrescriptionMother.*;
+import static support.PrescriptionMother.oneDay;
+import static support.PrescriptionMother.prescriptionStarting;
+import static support.PrescriptionMother.threeDays;
+import static support.PrescriptionMother.toSmallNumberOfDays;
 
 class PrescriptionTests {
 
