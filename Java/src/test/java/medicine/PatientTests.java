@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static support.MedicineMother.Name.AnyMedicineName;
 import static support.MedicineMother.Name.Medicine_A;
 import static support.MedicineMother.Name.Medicine_B;
 import static support.MedicineMother.Name.anyMedicineNames;
@@ -32,12 +33,12 @@ class PatientTests {
     }
 
     @Test
-    void querying_for_a_clash_with_only_one_medicine_name_can_not_cause_clashes_even_if_patient_has_a_prescription() {
+    void querying_for_a_clash_with_only_one_distinct_medicine_name_can_not_cause_clashes_even_if_patient_has_a_prescription() {
         PrescriptionBuilder oneDayPrescription = oneDayPrescription().starting(anyDateWithinTheInspectionPeriod());
 
-        patient.withPrescriptionFor(Medicine_A, oneDayPrescription);
+        patient.withPrescriptionFor(AnyMedicineName, oneDayPrescription);
 
-        assertThat(queryPrescriptionClashesOf(Medicine_A)).isEmpty();
+        assertThat(queryPrescriptionClashesOf(AnyMedicineName, AnyMedicineName)).isEmpty();
     }
 
     @Test

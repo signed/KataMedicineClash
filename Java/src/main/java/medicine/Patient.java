@@ -26,12 +26,13 @@ public class Patient {
     }
 
     public Collection<LocalDate> clash(Collection<String> medicineNames, int daysBack) {
-        if (medicineNames.size() < 2) {
+        List<String> distinctMedicineNames = medicineNames.stream().distinct().collect(Collectors.toList());
+        if (distinctMedicineNames.size() < 2) {
             return Collections.emptySet();
         }
         Map<LocalDate, List<String>> medicationRegimen = medicationRegimen();
         return range(1, daysBack + 1).mapToObj(i -> LocalDate.now().minusDays(i))
-                .filter(date -> hasClash(medicationRegimen, medicineNames, date))
+                .filter(date -> hasClash(medicationRegimen, distinctMedicineNames, date))
                 .collect(Collectors.toList());
     }
 
