@@ -15,6 +15,11 @@ public class PatientBuilder {
         return this;
     }
 
+    public PatientBuilder withoutSubscriptions() {
+        medicines.clear();
+        return this;
+    }
+
     public Patient build() {
         Patient patient = new Patient();
         medicines.values().stream().map(MedicineBuilder::build).forEach(patient::addMedicine);

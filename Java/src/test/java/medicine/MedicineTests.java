@@ -2,13 +2,15 @@ package medicine;
 
 import org.junit.jupiter.api.Test;
 import support.MedicineBuilder;
-import support.PatientMother;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static support.MedicineMother.Name.AnyMedicineName;
 import static support.MedicineMother.anyMedicine;
+import static support.PrescriptionMother.StartDate.anyOtherPrescriptionStartDate;
+import static support.PrescriptionMother.StartDate.anyPrescriptionStartDate;
 import static support.PrescriptionMother.oneDayPrescription;
 
 class MedicineTests {
@@ -17,22 +19,29 @@ class MedicineTests {
 
     @Test
     void combine_all_prescription_dates_of_all_prescriptions() {
-        LocalDate firstPrescriptionStartDate = PatientMother.anyPrescriptionStartDate();
-        medicine.withPrescription(oneDayPrescription().starting(firstPrescriptionStartDate));
-        LocalDate secondPrescriptionStartDate = PatientMother.anyOtherPrescriptionStartDate(firstPrescriptionStartDate);
-        medicine.withPrescription(oneDayPrescription().starting(secondPrescriptionStartDate));
+        LocalDate firstPrescriptionStartDate = anyPrescriptionStartDate();
+        LocalDate secondPrescriptionStartDate = anyOtherPrescriptionStartDate(firstPrescriptionStartDate);
+        thereIsAOneDayPrescription(firstPrescriptionStartDate);
+        thereIsAOneDayPrescription(secondPrescriptionStartDate);
 
-        assertThat(medicine.build().daysCoveredByPrescriptions()).containsExactly(firstPrescriptionStartDate, secondPrescriptionStartDate);
+        assertThat(daysCoveredByPrescriptions()).containsExactly(firstPrescriptionStartDate, secondPrescriptionStartDate);
     }
 
     @Test
     void remove_duplicate_prescription_dates() {
-        LocalDate dayWithDuplicatePrescription = PatientMother.anyPrescriptionStartDate();
+        LocalDate dateWithDuplicatePrescription = anyPrescriptionStartDate();
+        thereIsAOneDayPrescription(dateWithDuplicatePrescription);
+        thereIsAOneDayPrescription(dateWithDuplicatePrescription);
 
-        medicine.withPrescription(oneDayPrescription().starting(dayWithDuplicatePrescription));
-        medicine.withPrescription(oneDayPrescription().starting(dayWithDuplicatePrescription));
+        assertThat(daysCoveredByPrescriptions()).containsExactly(dateWithDuplicatePrescription);
+    }
 
-        assertThat(medicine.build().daysCoveredByPrescriptions()).containsExactly(dayWithDuplicatePrescription);
+    private List<LocalDate> daysCoveredByPrescriptions() {
+        return medicine.build().daysCoveredByPrescriptions();
+    }
+
+    private void thereIsAOneDayPrescription(LocalDate firstPrescriptionStartDate) {
+        medicine.withPrescription(oneDayPrescription().starting(firstPrescriptionStartDate));
     }
 
 }

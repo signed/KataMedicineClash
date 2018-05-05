@@ -22,14 +22,6 @@ public class PatientMother {
         return otherPrescriptionStartDate.minusDays(1);
     }
 
-    public static LocalDate anyPrescriptionStartDate() {
-        return LocalDate.now().plusDays(3472);
-    }
-
-    public static LocalDate anyOtherPrescriptionStartDate(LocalDate otherPrescriptionStartDate) {
-        return otherPrescriptionStartDate.plusDays(43);
-    }
-
     public static LocalDate anyDateBeforeTheInspectionPeriod() {
         return today().minusDays(defaultInspectionDaysInThePast()+43);
     }

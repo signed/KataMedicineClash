@@ -16,16 +16,30 @@ public class PrescriptionMother {
         return new PrescriptionBuilder();
     }
 
-    public static int oneDay() {
-        return 1;
+    public static class SupplyDays{
+
+        public static int oneDay() {
+            return 1;
+        }
+
+        public static int threeDays() {
+            return 3;
+        }
+
+        public static int toSmallNumberOfDays() {
+            return 0;
+        }
     }
 
-    public static int threeDays() {
-        return 3;
-    }
+    public static class StartDate{
 
-    public static int toSmallNumberOfDays() {
-        return 0;
+        public static LocalDate anyPrescriptionStartDate() {
+            return LocalDate.now().plusDays(3472);
+        }
+
+        public static LocalDate anyOtherPrescriptionStartDate(LocalDate otherPrescriptionStartDate) {
+            return otherPrescriptionStartDate.plusDays(43);
+        }
     }
 
 }

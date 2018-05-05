@@ -23,11 +23,11 @@ import static support.PrescriptionMother.oneDayPrescription;
 class PatientTests {
 
     private final int daysBack = defaultInspectionDaysInThePast();
-    private PatientBuilder patient = patientWithoutPrescriptions();
+    private final PatientBuilder patient = patientWithoutPrescriptions();
 
     @Test
     void patient_without_prescription_has_no_clashes() {
-        patient = patientWithoutPrescriptions();
+        patient.withoutSubscriptions();
 
         assertThat(queryPrescriptionClashesOf(anyMedicineNames())).isEmpty();
     }
