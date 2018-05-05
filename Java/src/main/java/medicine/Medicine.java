@@ -5,8 +5,7 @@ import java.util.Collection;
 
 public class Medicine {
     
-    private Collection<Prescription> prescriptions = new ArrayList<Prescription>();
-    
+    private final Collection<Prescription> prescriptions = new ArrayList<>();
     private final String name;
 
     public Medicine(String name) {
@@ -15,5 +14,9 @@ public class Medicine {
     
     public void addPrescription(Prescription prescription) {
         this.prescriptions.add(prescription);
+    }
+
+    public String name() {
+        return name;
     }
 }

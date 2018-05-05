@@ -1,13 +1,13 @@
 package medicine;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Prescription {
     
-    private Date dispenseDate = new Date();
-    private int daysSupply = 30;
+    private LocalDate dispenseDate;
+    private int daysSupply;
     
-    public Prescription(Date dispenseDate, int daysSupply) {
+    public Prescription(LocalDate dispenseDate, int daysSupply) {
         this.dispenseDate = dispenseDate;
         this.daysSupply = daysSupply;
     }

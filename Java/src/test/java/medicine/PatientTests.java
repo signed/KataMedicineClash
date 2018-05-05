@@ -1,17 +1,19 @@
 package medicine;
 
 import org.junit.jupiter.api.Test;
+import support.PatientBuilder;
+import support.PrescriptionBuilder;
 
-import java.util.Arrays;
+import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Date;
 
-import static medicine.PatientMother.patientWithoutSubscriptions;
+import static java.util.Arrays.asList;
+import static support.PatientMother.patientWithoutSubscriptions;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PatientTests {
 
-    private PatientBuilder patient;
+    private PatientBuilder patient = patientWithoutSubscriptions();
     private int daysBack = defaultPeriod();
 
     @Test
@@ -21,12 +23,23 @@ class PatientTests {
         assertThat(clashFor(anyMedicineNames())).isEmpty();
     }
 
-    private Collection<Date> clashFor(Collection<String> medicineNames) {
+    @Test
+    void patient_with_with_two_clashing_prescriptions() {
+        PrescriptionBuilder oneDayPrescription = new PrescriptionBuilder();
+        oneDayPrescription.starting(LocalDate.now()).supplyFor(1);
+
+        patient.withPrescriptionFor("one", oneDayPrescription);
+        patient.withPrescriptionFor("two", oneDayPrescription);
+
+        assertThat(clashFor(asList("one", "two"))).containsOnly(LocalDate.now().minusDays(1));
+    }
+
+    private Collection<LocalDate> clashFor(Collection<String> medicineNames) {
         return patient.build().clash(medicineNames, daysBack);
     }
 
     private Collection<String> anyMedicineNames() {
-        return Arrays.asList("one", "two");
+        return asList("one", "two");
     }
 
     private static int defaultPeriod() {

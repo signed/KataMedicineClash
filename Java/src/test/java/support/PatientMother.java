@@ -1,4 +1,6 @@
-package medicine;
+package support;
+
+import support.PatientBuilder;
 
 public class PatientMother {
 
