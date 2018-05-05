@@ -19,8 +19,6 @@ import static support.PrescriptionMother.oneDayPrescription;
 
 class PatientTests {
 
-    // TODO patient with single prescription
-
     private final int daysBack = defaultInspectionDaysInThePast();
     private PatientBuilder patient = patientWithoutPrescriptions();
 
@@ -29,6 +27,15 @@ class PatientTests {
         patient = patientWithoutPrescriptions();
 
         assertThat(clashFor(MedicineMother.anyMedicineNames())).isEmpty();
+    }
+
+    @Test
+    void querying_for_a_clash_with_only_one_medic_name_results_can_not_cause_clashes() {
+        PrescriptionBuilder oneDayPrescription = oneDayPrescription().starting(anyDateWithinTheInspectionPeriod());
+
+        patient.withPrescriptionFor("one", oneDayPrescription);
+
+        assertThat(clashFor(asList("one"))).isEmpty();
     }
 
     @Test
