@@ -15,7 +15,7 @@ public class PatientBuilder {
         return this;
     }
 
-    public PatientBuilder withoutSubscriptions() {
+    public PatientBuilder withoutPrescriptions() {
         medicines.clear();
         return this;
     }

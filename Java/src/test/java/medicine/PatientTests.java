@@ -27,7 +27,7 @@ class PatientTests {
 
     @Test
     void patient_without_prescription_has_no_clashes() {
-        patient.withoutSubscriptions();
+        patient.withoutPrescriptions();
 
         assertThat(queryPrescriptionClashesOf(anyMedicineNames())).isEmpty();
     }
