@@ -3,14 +3,15 @@ package medicine;
 import org.junit.jupiter.api.Test;
 import support.MedicineMother;
 import support.PatientBuilder;
-import support.PatientMother;
 import support.PrescriptionBuilder;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collection;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static support.MedicineMother.Name.anyMedicineNames;
 import static support.PatientMother.anyDateBeforeTheInspectionPeriod;
 import static support.PatientMother.anyDateWithinTheInspectionPeriod;
 import static support.PatientMother.anyOtherDateWithinTheInspectionPeriod;
@@ -27,16 +28,16 @@ class PatientTests {
     void patient_without_prescription_has_no_clashes() {
         patient = patientWithoutPrescriptions();
 
-        assertThat(clashFor(MedicineMother.anyMedicineNames())).isEmpty();
+        assertThat(queryForClashFor(anyMedicineNames())).isEmpty();
     }
 
     @Test
     void querying_for_a_clash_with_only_one_medicine_name_can_not_cause_clashes_even_if_patient_has_a_prescription() {
         PrescriptionBuilder oneDayPrescription = oneDayPrescription().starting(anyDateWithinTheInspectionPeriod());
 
-        patient.withPrescriptionFor("one", oneDayPrescription);
+        patient.withPrescriptionFor(MedicineMother.Name.Medicine_A, oneDayPrescription);
 
-        assertThat(clashFor(asList("one"))).isEmpty();
+        assertThat(queryForClashFor(asList(MedicineMother.Name.Medicine_A))).isEmpty();
     }
 
     @Test
@@ -44,7 +45,7 @@ class PatientTests {
         LocalDate dateOfPrescription = anyDateWithinTheInspectionPeriod();
         thereIsAMedicineClashAt(dateOfPrescription);
 
-        assertThat(clashFor(asList("one", "two"))).containsOnly(dateOfPrescription);
+        assertThat(queryForClashFor(asList(MedicineMother.Name.Medicine_A, MedicineMother.Name.Medicine_B))).containsOnly(dateOfPrescription);
     }
 
     @Test
@@ -55,10 +56,10 @@ class PatientTests {
         LocalDate dateOfPrescriptionTwo = anyOtherDateWithinTheInspectionPeriod(dateOfPrescriptionOne);
         PrescriptionBuilder prescriptionTwo = oneDayPrescription().starting(dateOfPrescriptionTwo);
 
-        patient.withPrescriptionFor("one", prescriptionOne);
-        patient.withPrescriptionFor("two", prescriptionTwo);
+        patient.withPrescriptionFor(MedicineMother.Name.Medicine_A, prescriptionOne);
+        patient.withPrescriptionFor(MedicineMother.Name.Medicine_B, prescriptionTwo);
 
-        assertThat(clashFor(asList("one", "two")))
+        assertThat(queryForClashFor(asList(MedicineMother.Name.Medicine_A, MedicineMother.Name.Medicine_B)))
                 .describedAs("prescriptions are on different days and should not clash").isEmpty();
     }
 
@@ -66,17 +67,21 @@ class PatientTests {
     void do_not_report_clashes_that_are_before_the_inspection_period() {
         thereIsAMedicineClashAt(anyDateBeforeTheInspectionPeriod());
 
-        assertThat(clashFor(asList("one", "two")))
+        assertThat(queryForClashFor(asList(MedicineMother.Name.Medicine_A, MedicineMother.Name.Medicine_B)))
                 .describedAs("should not be reported as clash because it is before the inspection period").isEmpty();
     }
 
     private void thereIsAMedicineClashAt(LocalDate clashDay) {
         PrescriptionBuilder oneDayPrescription = oneDayPrescription().starting(clashDay);
-        patient.withPrescriptionFor("one", oneDayPrescription);
-        patient.withPrescriptionFor("two", oneDayPrescription);
+        patient.withPrescriptionFor(MedicineMother.Name.Medicine_A, oneDayPrescription);
+        patient.withPrescriptionFor(MedicineMother.Name.Medicine_B, oneDayPrescription);
     }
 
-    private Collection<LocalDate> clashFor(Collection<String> medicineNames) {
+    private Collection<LocalDate> queryForClashFor(String ... medicineNames) {
+        return queryForClashFor(Arrays.asList(medicineNames));
+    }
+
+    private Collection<LocalDate> queryForClashFor(Collection<String> medicineNames) {
         return patient.build().clash(medicineNames, daysBack);
     }
 
