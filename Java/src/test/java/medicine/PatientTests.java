@@ -34,9 +34,7 @@ class PatientTests {
 
     @Test
     void querying_for_a_clash_with_only_one_distinct_medicine_name_can_not_cause_clashes_even_if_patient_has_a_prescription() {
-        PrescriptionBuilder oneDayPrescription = oneDayPrescription().starting(anyDateWithinTheInspectionPeriod());
-
-        patient.withPrescriptionFor(AnyMedicineName, oneDayPrescription);
+        thereIsAOneDayPrescriptionFor(AnyMedicineName, anyDateWithinTheInspectionPeriod());
 
         assertThat(queryPrescriptionClashesOf(AnyMedicineName, AnyMedicineName)).isEmpty();
     }
@@ -52,13 +50,8 @@ class PatientTests {
     @Test
     void patient_taking_two_clashing_medicines_but_on_different_days_is_not_a_clash() {
         LocalDate dateOfPrescriptionOne = anyDateWithinTheInspectionPeriod();
-        PrescriptionBuilder prescriptionOne = oneDayPrescription().starting(dateOfPrescriptionOne);
-
-        LocalDate dateOfPrescriptionTwo = anyOtherDateWithinTheInspectionPeriod(dateOfPrescriptionOne);
-        PrescriptionBuilder prescriptionTwo = oneDayPrescription().starting(dateOfPrescriptionTwo);
-
-        patient.withPrescriptionFor(Medicine_A, prescriptionOne);
-        patient.withPrescriptionFor(Medicine_B, prescriptionTwo);
+        thereIsAOneDayPrescriptionFor(Medicine_A, dateOfPrescriptionOne);
+        thereIsAOneDayPrescriptionFor(Medicine_B, anyOtherDateWithinTheInspectionPeriod(dateOfPrescriptionOne));
 
         assertThat(queryPrescriptionClashesOf(Medicine_A, Medicine_B))
                 .describedAs("prescriptions are on different days and should not clash").isEmpty();
@@ -70,6 +63,11 @@ class PatientTests {
 
         assertThat(queryPrescriptionClashesOf(Medicine_A, Medicine_B))
                 .describedAs("should not be reported as a clash because it is before the inspection period").isEmpty();
+    }
+
+    private void thereIsAOneDayPrescriptionFor(String medicineName, LocalDate dateOfPrescriptionTwo) {
+        PrescriptionBuilder prescriptionTwo = oneDayPrescription().starting(dateOfPrescriptionTwo);
+        patient.withPrescriptionFor(medicineName, prescriptionTwo);
     }
 
     private void thereIsAMedicineClashAt(LocalDate clashDay) {
