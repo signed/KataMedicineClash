@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static support.MedicineMother.Name.AnyMedicineName;
 import static support.MedicineMother.Name.Medicine_A;
 import static support.MedicineMother.Name.Medicine_B;
-import static support.MedicineMother.Name.anyMedicineNames;
+import static support.MedicineMother.Name.anyDistinctMedicineNames;
 import static support.PatientMother.anyDateBeforeTheInspectionPeriod;
 import static support.PatientMother.anyDateWithinTheInspectionPeriod;
 import static support.PatientMother.anyOtherDateWithinTheInspectionPeriod;
@@ -29,7 +29,7 @@ class PatientTests {
     void patient_without_prescription_has_no_clashes() {
         patient.withoutPrescriptions();
 
-        assertThat(queryPrescriptionClashesOf(anyMedicineNames())).isEmpty();
+        assertThat(queryPrescriptionClashesOf(anyDistinctMedicineNames())).isEmpty();
     }
 
     @Test

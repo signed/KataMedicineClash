@@ -15,7 +15,7 @@ public class MedicineMother {
         public static final String Medicine_A = "medicine A";
         public static final String Medicine_B = "medicine B";
 
-        public static Collection<String> anyMedicineNames() {
+        public static Collection<String> anyDistinctMedicineNames() {
             return asList(Medicine_A, Medicine_B);
         }
 
