@@ -1,10 +1,12 @@
 package support;
 
-import support.PatientBuilder;
-
 public class PatientMother {
 
-    public static PatientBuilder patientWithoutSubscriptions() {
+    public static PatientBuilder patientWithoutPrescriptions() {
         return new PatientBuilder();
+    }
+
+    public static int defaultInspectionDaysInThePast() {
+        return 90;
     }
 }

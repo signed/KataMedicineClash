@@ -1,10 +1,7 @@
 package medicine;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;

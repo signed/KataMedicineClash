@@ -27,4 +27,24 @@ public class PrescriptionMother {
     public static int toSmallNumberOfDays() {
         return 0;
     }
+
+    public static LocalDate today() {
+        return LocalDate.now();
+    }
+
+    public static LocalDate anyDateWithinTheInspectionPeriod() {
+        return today().minusDays(1);
+    }
+
+    public static LocalDate anyOtherDateWithinTheInspectionPeriod(LocalDate otherPrescriptionStartDate) {
+        return otherPrescriptionStartDate.minusDays(1);
+    }
+
+    public static LocalDate anyPrescriptionStartDate() {
+        return LocalDate.now().plusDays(3472);
+    }
+
+    public static LocalDate anyOtherPrescriptionStartDate(LocalDate otherPrescriptionStartDate) {
+        return otherPrescriptionStartDate.plusDays(43);
+    }
 }

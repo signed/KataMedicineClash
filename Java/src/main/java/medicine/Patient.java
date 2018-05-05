@@ -3,13 +3,13 @@ package medicine;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 public class Patient {
 
-    private final Collection<Medicine> medicines = new ArrayList<Medicine>();
+    private final Collection<Medicine> medicines = new ArrayList<>();
 
     public void addMedicine(Medicine medicine) {
         this.medicines.add(medicine);
@@ -20,12 +20,17 @@ public class Patient {
     }
 
     public Collection<LocalDate> clash(Collection<String> medicineNames, int daysBack) {
-        ArrayList<LocalDate> localDates = new ArrayList<>();
-        List<String> dasfsa = medicines.stream().map(Medicine::name).collect(Collectors.toList());
+        List<LocalDate> daysWithClashingPrescriptions = new ArrayList<>();
+
+
+        List<String> dasfsa = medicines.stream()
+                .map(Medicine::name)
+                .collect(toList());
+
         if (dasfsa.containsAll(medicineNames)) {
-            localDates.add(LocalDate.now().minusDays(1));
+            daysWithClashingPrescriptions.add(LocalDate.now().minusDays(1));
         }
-        return localDates;
+        return daysWithClashingPrescriptions;
     }
 
 
