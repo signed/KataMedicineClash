@@ -42,7 +42,7 @@ class PatientTests {
     @Test
     void patient_with_two_clashing_prescriptions() {
         LocalDate dateOfPrescription = anyDateWithinTheInspectionPeriod();
-        thereIsAMedicineClashAt(dateOfPrescription);
+        thereIsAMedicineClashAt(dateOfPrescription, Medicine_A, Medicine_B);
 
         assertThat(queryPrescriptionClashesOf(Medicine_A, Medicine_B)).containsOnly(dateOfPrescription);
     }
@@ -59,7 +59,7 @@ class PatientTests {
 
     @Test
     void do_not_report_clashes_that_are_before_the_inspection_period() {
-        thereIsAMedicineClashAt(anyDateBeforeTheInspectionPeriod());
+        thereIsAMedicineClashAt(anyDateBeforeTheInspectionPeriod(), Medicine_A, Medicine_B);
 
         assertThat(queryPrescriptionClashesOf(Medicine_A, Medicine_B))
                 .describedAs("should not be reported as a clash because it is before the inspection period").isEmpty();
@@ -70,10 +70,10 @@ class PatientTests {
         patient.withPrescriptionFor(medicineName, prescriptionTwo);
     }
 
-    private void thereIsAMedicineClashAt(LocalDate clashDay) {
+    private void thereIsAMedicineClashAt(LocalDate clashDay, String one, String two) {
         PrescriptionBuilder oneDayPrescription = oneDayPrescription().starting(clashDay);
-        patient.withPrescriptionFor(Medicine_A, oneDayPrescription);
-        patient.withPrescriptionFor(Medicine_B, oneDayPrescription);
+        patient.withPrescriptionFor(one, oneDayPrescription);
+        patient.withPrescriptionFor(two, oneDayPrescription);
     }
 
     private Collection<LocalDate> queryPrescriptionClashesOf(String ... medicineNames) {
